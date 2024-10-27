@@ -1,0 +1,26 @@
+version: "3"
+services:
+  postal:
+    image: ghcr.io/postalhq/postal:latest  # Make sure you can access this image
+    depends_on:
+      - mariadb
+    entrypoint: ["/docker-entrypoint.sh"]
+    volumes:
+      - "./docker/ci-config:/config"
+    env_file: .env  # Load environment variables from the .env file
+    environment:
+      POSTAL_SIGNING_KEY_PATH: /config/signing.key
+      LOGGING_ENABLED: "false"
+      RAILS_ENVIRONMENT: test
+      RAILS_LOG_ENABLED: "false"
+      WAIT_FOR_TIMEOUT: 90
+      WAIT_FOR_TARGETS: "mariadb:3306"
+      
+  mariadb:
+    image: mariadb:10.6  # Specifies the MariaDB version
+    restart: always
+    environment:
+      MARIADB_DATABASE: postal
+      MARIADB_ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+      - mariadb_data:/var/lib/mysql  # Persistent storage for MariaDB data
