@@ -1,11 +1,11 @@
-version: "3"
-
 services:
   postal:
-    image: ${POSTAL_IMAGE}
+    build:
+      context: .   # Uses the Dockerfile in your repo
     entrypoint: ["/docker-entrypoint.sh"]
     volumes:
       - "./docker/ci-config:/config"
+    env_file: .env  # Load environment variables from the .env file
     environment:
       POSTAL_SIGNING_KEY_PATH: /config/signing.key
       LOGGING_ENABLED: "false"
