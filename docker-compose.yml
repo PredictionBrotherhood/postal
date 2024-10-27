@@ -3,8 +3,6 @@ version: "3"
 services:
   postal:
     image: ${POSTAL_IMAGE}
-    depends_on:
-      - mysql
     entrypoint: ["/docker-entrypoint.sh"]
     volumes:
       - "./docker/ci-config:/config"
@@ -14,5 +12,3 @@ services:
       RAILS_ENVIRONMENT: test
       RAILS_LOG_ENABLED: "false"
       WAIT_FOR_TIMEOUT: 90
-      WAIT_FOR_TARGETS: |-
-        mysql:3306
