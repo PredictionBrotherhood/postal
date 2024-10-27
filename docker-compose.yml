@@ -1,14 +1,26 @@
+
 services:
   postal:
     build:
-      context: .   # Uses the Dockerfile in your repo
+      context: .  # This assumes your Dockerfile is in the root of your forked Postal repository
+    depends_on:
+      - mariadb
     entrypoint: ["/docker-entrypoint.sh"]
     volumes:
       - "./docker/ci-config:/config"
-    env_file: .env  # Load environment variables from the .env file
     environment:
       POSTAL_SIGNING_KEY_PATH: /config/signing.key
       LOGGING_ENABLED: "false"
       RAILS_ENVIRONMENT: test
       RAILS_LOG_ENABLED: "false"
       WAIT_FOR_TIMEOUT: 90
+      WAIT_FOR_TARGETS: "mariadb:3306"
+    env_file: .env  # Provide the DB URL and other environment variables here
+
+  mariadb:
+    image: mariadb:10.6  # Ensuring MariaDB compatibility with Postal
+    restart: always
+    environment:
+      MARIADB_DATABASE: postal
+      MARIADB_ALLOW_EMPTY_PASSWORD: "yes"
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
